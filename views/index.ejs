@@ -24,13 +24,14 @@
           <img class="poster" src="<%= result.poster_path %>" alt="<%= result.title %> poster">
           <p class="description"> <span class="bold">Description:</span> <%= result.overview %></p>
           <p class="date"> <span class="bold">Release Date:</span> <%= result.release_date %></p>
-          <!-- Olmazsa buttona kadar sil -->
+          <!-- Olmazsa buradan -->
           <div class="ratings">
             <% for (let i = 1; i <= 10; i++) { %>
               <span class="rating-star" data-rating="<%= i %>">★</span>
             <% } %>
             <input type="hidden" name="rate" id="rating-value" value="">
           </div>
+          <!-- Olmazsa buraya kadar sil -->
           <button class="add-btn" type="submit">Submit Rating</button>
           <input type="hidden" name="title" value="<%= result.title %>">
           <input type="hidden" name="poster" value="<%= result.poster_path %>">
@@ -40,7 +41,7 @@
         </form>
       <% }) %>
       </div>
-
+    </div>
       <!-- Show added AMTss -->
 
       <% } else if (locals.data && locals.data.length > 0 ) { %>
@@ -60,12 +61,19 @@
       <% }) %>
     </div>
 
-    <!-- Doesn't work atm, add login functions etc. -->
+    <!-- Login/Register -->
      
   <% } else { %>
-    <p>Buraya grid-container title falan gelecek formsuz, rating için yıldız eklenecek</p>
-  <% } %>
+    
+    <div class="button-container">
+      <form action="/redirect" method="POST">
+        <button type="submit" class="button" name="action" value="register">Register</button>
+        <button type="submit" class="button" name="action" value="login">Login</button>
+      </form>
     </div>
+
+  <% } %>
+
  
     <%-include("partials/footer.ejs") %>
   </body>

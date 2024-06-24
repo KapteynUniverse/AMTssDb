@@ -3,17 +3,27 @@ import axios from "axios";
 import env from "dotenv";
 import bodyParser from "body-parser";
 import pg from "pg";
+import bcrypt from "bcrypt";
+// import passport from "passport";
+// import { Strategy } from "passport-local";
+// import GoogleStrategy from "passport-google-oauth2";
+// import session from "express-session";
 
 const app = express();
 const port = 3000;
-const API_URL = "https://api.themoviedb.org/3";
-const IMG_URL = "https://image.tmdb.org/t/p/original";
+const saltRounds = 10; //hashing
+const API_URL = "https://api.themoviedb.org/3"; // API for AMTsDB
+const IMG_URL = "https://image.tmdb.org/t/p/original"; // Poster URL
 env.config();
+
+// Middleware
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 app.set("view engine", "ejs");
+
+// Env
 
 const db = new pg.Client({
   user: process.env.PG_USER,
@@ -23,6 +33,8 @@ const db = new pg.Client({
   port: process.env.PG_PORT,
 });
 db.connect();
+
+// If user connected, Main page
 
 app.get("/", async (req, res) => {
   const database = await db.query(`SELECT * FROM AMTsDb`);
@@ -35,6 +47,78 @@ app.get("/", async (req, res) => {
     id: obj.id,
   }));
   res.render("index", { data: data });
+});
+
+// If user not connected, Redirect to Login/Register page
+
+app.post("/redirect", (req, res) => {
+  const action = req.body.action;
+  if (action === "register") {
+    res.render("register.ejs");
+  } else if (action === "login") {
+    res.render("login.ejs");
+  } else {
+    res.status(400).send("Unknown action");
+  }
+});
+
+// Register
+
+app.post("/register", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const checkResult = await db.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
+    if (checkResult.rows.length > 0) {
+      res.send("Email already exists. Try logging in.");
+    } else {
+      bcrypt.hash(password, saltRounds, async (err, hash) => {
+        if (err) {
+          console.error("Error hashing password:", err);
+        } else {
+          console.log("Hashed password:", hash);
+          await db.query(
+            `INSERT INTO users (email, password) VALUES ($1, $2)`,
+            [email, hash]
+          );
+          res.render("index");
+        }
+      });
+    }
+  } catch (err) {
+    console.log(err.detail);
+  }
+});
+
+// Login
+
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const result = await db.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
+    if (result.rows.length > 0) {
+      const storedPassword = result.rows[0].password;
+      bcrypt.compare(password, storedPassword, (err, result) => {
+        if (err) {
+          console.error("Error comparing passwords:", err);
+        } else {
+          if (result) {
+            res.render("index");
+          } else {
+            res.send("Incorrect Password");
+          }
+        }
+      });
+    } else {
+      res.send("User not found");
+    }
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 // Handling searchbar input
@@ -72,7 +156,7 @@ app.get("/search", async (req, res) => {
   }
 });
 
-// Add and rate selected AMTs to the database
+// Add and rate? selected AMTs to the database
 
 app.post("/add", async (req, res) => {
   const { title, poster, description, release_date, rate } = req.body;
@@ -81,7 +165,6 @@ app.post("/add", async (req, res) => {
       `INSERT INTO AMTsDb (title, description, url, release_date) VALUES ($1, $2, $3, $4)`,
       [title, description, poster, release_date]
     );
-    console.log(req.body);
     res.redirect("/");
   } catch (err) {
     console.log(err);

@@ -4,10 +4,10 @@ import env from "dotenv";
 import bodyParser from "body-parser";
 import pg from "pg";
 import bcrypt from "bcrypt";
-// import passport from "passport";
-// import { Strategy } from "passport-local";
-// import GoogleStrategy from "passport-google-oauth2";
-// import session from "express-session";
+import session from "express-session"; // cookie
+import passport from "passport";
+import { Strategy } from "passport-local";
+import GoogleStrategy from "passport-google-oauth2";
 
 const app = express();
 const port = 3000;
@@ -18,10 +18,24 @@ env.config();
 
 // Middleware
 
+app.set("view engine", "ejs");
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-app.set("view engine", "ejs");
+app.use(
+  session({
+    secret: process.env.SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 1000 * 86400,
+    },
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Env
 
@@ -34,35 +48,68 @@ const db = new pg.Client({
 });
 db.connect();
 
-// If user connected, Main page
+// Check if user is connected and open main page or login/register
 
 app.get("/", async (req, res) => {
-  const database = await db.query(`SELECT * FROM AMTsDb`);
-  const data = database.rows.map((obj) => ({
-    title: obj.title,
-    overview: obj.description,
-    release_date: obj.release_date.toLocaleDateString("tr-TR").slice(0, 10),
-    added_date: obj.added_date.toLocaleDateString("tr-TR").slice(0, 10),
-    poster_path: obj.url,
-    id: obj.id,
-  }));
-  res.render("index", { data: data });
-});
-
-// If user not connected, Redirect to Login/Register page
-
-app.post("/redirect", (req, res) => {
-  const action = req.body.action;
-  if (action === "register") {
-    res.render("register.ejs");
-  } else if (action === "login") {
-    res.render("login.ejs");
+  if (req.isAuthenticated()) {
+    const database = await db.query(`SELECT * FROM AMTsDb`);
+    const data = database.rows.map((obj) => ({
+      title: obj.title,
+      overview: obj.description,
+      release_date: obj.release_date.toLocaleDateString("tr-TR").slice(0, 10),
+      added_date: obj.added_date.toLocaleDateString("tr-TR").slice(0, 10),
+      poster_path: obj.url,
+      id: obj.id,
+    }));
+    res.render("index", { data: data });
   } else {
-    res.status(400).send("Unknown action");
+    res.render("login-register");
   }
 });
 
-// Register
+app.get("/login-register", (req, res) => {
+  res.render("login-register");
+});
+
+// Login via Google
+
+app.get(
+  "/auth/google",
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+  })
+);
+
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", {
+    successRedirect: "/",
+    failureRedirect: "login-register",
+  })
+);
+
+// Logout
+
+app.get("/logout", (req, res) => {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.redirect("/");
+  });
+});
+
+// Handle login input
+
+app.post(
+  "/login",
+  passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "login-register",
+  })
+);
+
+// Handle register input and login
 
 app.post("/register", async (req, res) => {
   const { email, password } = req.body;
@@ -78,12 +125,15 @@ app.post("/register", async (req, res) => {
         if (err) {
           console.error("Error hashing password:", err);
         } else {
-          console.log("Hashed password:", hash);
-          await db.query(
-            `INSERT INTO users (email, password) VALUES ($1, $2)`,
+          const result = await db.query(
+            `INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *`,
             [email, hash]
           );
-          res.render("index");
+          const user = result.rows[0];
+          req.login(user, (err) => {
+            console.log(err);
+            res.redirect("/");
+          });
         }
       });
     }
@@ -92,36 +142,7 @@ app.post("/register", async (req, res) => {
   }
 });
 
-// Login
-
-app.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  try {
-    const result = await db.query("SELECT * FROM users WHERE email = $1", [
-      email,
-    ]);
-    if (result.rows.length > 0) {
-      const storedPassword = result.rows[0].password;
-      bcrypt.compare(password, storedPassword, (err, result) => {
-        if (err) {
-          console.error("Error comparing passwords:", err);
-        } else {
-          if (result) {
-            res.render("index");
-          } else {
-            res.send("Incorrect Password");
-          }
-        }
-      });
-    } else {
-      res.send("User not found");
-    }
-  } catch (err) {
-    console.log(err);
-  }
-});
-
-// Handling searchbar input
+// Handle searchbar input
 
 app.get("/search", async (req, res) => {
   const searchInput = req.query.search;
@@ -181,6 +202,77 @@ app.post("/delete", async (req, res) => {
   } catch (err) {
     console.log(err);
   }
+});
+
+passport.use(
+  "local",
+  new Strategy(
+    { usernameField: "email", passwordField: "password" },
+    async function verify(username, password, cb) {
+      try {
+        const result = await db.query("SELECT * FROM users WHERE email = $1", [
+          username,
+        ]);
+        if (result.rows.length > 0) {
+          const user = result.rows[0];
+          const storedPassword = user.password;
+          bcrypt.compare(password, storedPassword, (err, valid) => {
+            if (err) {
+              return cb(err);
+            } else {
+              if (valid) {
+                return cb(null, user);
+              } else {
+                return cb(null, false);
+              }
+            }
+          });
+        } else {
+          return cb(null, false, { message: "User not found" });
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  )
+);
+
+passport.use(
+  "google",
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: "http://localhost:3000/auth/google/callback",
+      userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
+    },
+    async (accessToken, refreshToken, profile, cb) => {
+      try {
+        console.log(profile);
+        const result = await db.query("SELECT * FROM users WHERE email = $1", [
+          profile.email,
+        ]);
+        if (result.rows.length === 0) {
+          const newUser = await db.query(
+            "INSERT INTO users (email, password) VALUES ($1, $2)",
+            [profile.email, "google"]
+          );
+          return cb(null, newUser.rows[0]);
+        } else {
+          return cb(null, result.rows[0]);
+        }
+      } catch (err) {
+        return cb(err);
+      }
+    }
+  )
+);
+
+passport.serializeUser((user, cb) => {
+  cb(null, user);
+});
+passport.deserializeUser((user, cb) => {
+  cb(null, user);
 });
 
 app.listen(port, () => {

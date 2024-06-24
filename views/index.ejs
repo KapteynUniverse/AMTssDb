@@ -45,7 +45,7 @@
       <!-- Show added AMTss -->
 
       <% } else if (locals.data && locals.data.length > 0 ) { %>
-
+        <a class="btn btn-light btn-lg" href="/logout" role="button">Log Out</a>
         <h1 class="title">AMTss</h1>
     <div class="grid-container">
       <% data.forEach(data => { %>
@@ -65,12 +65,7 @@
      
   <% } else { %>
     
-    <div class="button-container">
-      <form action="/redirect" method="POST">
-        <button type="submit" class="button" name="action" value="register">Register</button>
-        <button type="submit" class="button" name="action" value="login">Login</button>
-      </form>
-    </div>
+    <p>Belki bir şey ekleriz</p>
 
   <% } %>
 

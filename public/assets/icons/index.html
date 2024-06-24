@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="search-bar">
+      <form action="get">
+        <input
+          id="input"
+          type="text"
+          placeholder="Search for Movie/Anime/TV Show"
+          name="search"
+        />
+        <button id="btn" type="submit"><i class="fa fa-search"></i></button>
+      </form>
+    </div>
+
+    <footer>
+      <div class="footer">
+        <p id="copyright"></p>
+
+        <script>
+          var currentYear = new Date().getFullYear();
+
+          document.getElementById("copyright").textContent =
+            "Copyright © " + "Asilcan Toper " + currentYear;
+        </script>
+        <a href="https://github.com/KapteynUniverse"
+          ><img src="./icons/github.png"
+        /></a>
+        <a href="https://www.linkedin.com/in/asilcan-toper-46a437207/"
+          ><img src="./icons/linkedin.png"
+        /></a>
+      </div>
+    </footer>
+  </body>
+  <script src="../index.js" charset="UTF-8"></script>
+</html>

@@ -11,32 +11,44 @@ body {
 
 .search-bar {
   display: flex;
-  border: 5px red solid;
+  align-items: center;
+  padding-top: 10px;
 }
 
 input[type="text"] {
-  padding: 6px;
-  margin-top: 8px;
-  margin-bottom: 8px;
-  margin-left: 16px;
-  font-size: 24px;
-  border: none;
-  flex: auto;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  flex: 1;
 }
 
 button {
-  padding: 6px 10px;
-  margin-top: 8px;
-  margin-bottom: 8px;
-  margin-right: 16px;
+  padding: 10px;
   background: #ddd;
   font-size: 16px;
   border: none;
   cursor: pointer;
+  border-radius: 5px;
 }
 
 button:hover {
   background: #ccc;
+}
+
+.logout {
+  padding: 10px;
+  background-color: #4285f4;
+  color: white;
+  text-align: center;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.logout:hover {
+  background-color: #357ae8;
 }
 
 h1 {
@@ -56,7 +68,7 @@ h1 {
   font-size: 16px;
   border: 5px solid red;
   margin: 5px;
-  border-radius: 10%;
+  border-radius: 10px;
 }
 
 .grid-item > .poster,
@@ -116,7 +128,7 @@ h1 {
 }
 
 .rating-star.active {
-  color: orange; /* Example styling */
+  color: orange;
 }
 
 .add-btn,
@@ -126,6 +138,79 @@ h1 {
   padding: 10px;
   border-radius: 20px;
   box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.05);
+}
+
+.flexbox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.form-container {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.flex-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 300px;
+}
+
+.flex-item {
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.input-field {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.login {
+  display: block;
+  width: 50%;
+  padding: 10px;
+  background-color: #4285f4;
+  color: white;
+  text-align: center;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 0 auto;
+}
+
+.login:hover {
+  background-color: #357ae8;
+}
+
+.google-container {
+  width: calc(300px * 2 + 20px);
+  text-align: center;
+}
+
+.btn-block {
+  display: inline-block;
+  width: 100%;
+  padding: 10px;
+  background-color: #4285f4;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.btn-block:hover {
+  background-color: #357ae8;
 }
 
 .footer {

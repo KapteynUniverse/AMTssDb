@@ -10,8 +10,11 @@
           name="search"
         />
         <button type="submit"><i class="fa fa-search"></i></button>
-      </form>
 
+          <a class="logout" href="/logout" role="button">Log Out</a>
+
+      </form>
+      
       <!-- Show search results -->
     
     <% if (locals.results) { %>
@@ -45,7 +48,7 @@
       <!-- Show added AMTss -->
 
       <% } else if (locals.data && locals.data.length > 0 ) { %>
-        <a class="btn btn-light btn-lg" href="/logout" role="button">Log Out</a>
+        
         <h1 class="title">AMTss</h1>
     <div class="grid-container">
       <% data.forEach(data => { %>

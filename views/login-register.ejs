@@ -1,35 +1,41 @@
 <%- include('partials/header') %>
-
-<h1>Login</h1>
-
-<!-- Makes POST request to /login route -->
-<form action="/login" method="POST">
-  <label for="email">Email:</label>
-  <input type="email" name="email" />
-
-  <label for="password">Password:</label>
-  <input type="password" name="password" />
-
-  <button type="submit">Login</button>
-</form>
-
-<h1>Register</h1>
-
-<!-- Makes POST request to /login route -->
-<form action="/register" method="POST">
-  <label for="email">Email:</label>
-  <input type="email" name="email" />
-
-  <label for="password">Password:</label>
-  <input type="password" name="password" />
-
-  <button type="submit">Login</button>
-</form>
-
-<div class="card-body">
-  <a class="btn btn-block" href="/auth/google" role="button">
-    Sign In with Google
-  </a>
+<div class="flexbox">
+  <div class="form-container">
+    <div class="flex-card">
+      <h1 class="title">Login</h1>
+      <!-- Makes POST request to /login route -->
+      <form action="/login" method="POST">
+        <div class="flex-item">
+          <label for="email">Email:</label>
+          <input type="email" name="email" class="input-field" />
+        </div>
+        <div class="flex-item">
+          <label for="password">Password:</label>
+          <input type="password" name="password" class="input-field" />
+        </div>
+        <button type="submit" class="login">Login</button>
+      </form>
+    </div>
+    <div class="flex-card">
+      <h1 class="title">Register</h1>
+      <!-- Makes POST request to /register route -->
+      <form action="/register" method="POST">
+        <div class="flex-item">
+          <label for="email">Email:</label>
+          <input type="email" name="email" class="input-field" />
+        </div>
+        <div class="flex-item">
+          <label for="password">Password:</label>
+          <input type="password" name="password" class="input-field" />
+        </div>
+        <button type="submit" class="login">Register</button>
+      </form>
+    </div>
+  </div>
+  <div class="google-container">
+    <a class="btn btn-block" href="/auth/google" role="button"
+      >Sign In with Google</a
+    >
+  </div>
 </div>
-
 <%- include('partials/footer') %>

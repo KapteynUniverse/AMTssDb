@@ -61,6 +61,7 @@ app.get("/", async (req, res) => {
       poster_path: obj.url,
       id: obj.id,
     }));
+
     res.render("index", { data: data });
   } else {
     res.render("login-register");
@@ -87,6 +88,10 @@ app.get(
     failureRedirect: "login-register",
   })
 );
+
+app.get("/auth/google/login-register", (req, res) => {
+  res.redirect("/");
+});
 
 // Logout
 
@@ -171,7 +176,9 @@ app.get("/search", async (req, res) => {
         release_date: obj.release_date || obj.first_air_date,
         poster_path: IMG_URL + obj.poster_path,
       }));
-    res.render("index", { results: results });
+    res.render("index", {
+      results: results,
+    });
   } catch (err) {
     res.status(500).send(err.message);
   }
@@ -254,8 +261,8 @@ passport.use(
         ]);
         if (result.rows.length === 0) {
           const newUser = await db.query(
-            "INSERT INTO users (email, password) VALUES ($1, $2)",
-            [profile.email, "google"]
+            "INSERT INTO users (email, password, name, picture) VALUES ($1, $2, $3, $4)",
+            [profile.email, "google", profile.displayName, profile.picture]
           );
           return cb(null, newUser.rows[0]);
         } else {

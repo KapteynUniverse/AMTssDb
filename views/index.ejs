@@ -17,34 +17,32 @@
       
       <!-- Show search results -->
     
-    <% if (locals.results) { %>
-    <div>
-      <h1 class="title">RESULTS:</h1>
-    <div class="grid-container">
-      <% results.forEach(result => { %>
-        <form action="/add" method="post" class="grid-item">
-          <h2 class="title"><%= result.title %></h2>
-          <img class="poster" src="<%= result.poster_path %>" alt="<%= result.title %> poster">
-          <p class="description"> <span class="bold">Description:</span> <%= result.overview %></p>
-          <p class="date"> <span class="bold">Release Date:</span> <%= result.release_date %></p>
-          <!-- Olmazsa buradan -->
-          <div class="ratings">
-            <% for (let i = 1; i <= 10; i++) { %>
-              <span class="rating-star" data-rating="<%= i %>">★</span>
-            <% } %>
-            <input type="hidden" name="rate" id="rating-value" value="">
+      <% if (locals.results) { %>
+        <div>
+          <h1 class="title">RESULTS:</h1>
+          <div class="grid-container">
+            <% results.forEach(result => { %>
+            <form action="/add" method="post" class="grid-item">
+              <h2 class="title"><%= result.title %></h2>
+              <img class="poster" src="<%= result.poster_path %>" alt="<%= result.title %> poster">
+              <p class="description"> <span class="bold">Description:</span> <%= result.overview %></p>
+              <p class="date"> <span class="bold">Release Date:</span> <%= result.release_date %></p>
+              <!-- Olmazsa buradan -->
+              <div class="ratings">
+                <% for (let i = 10; i > 0; i--) { %>
+                <span class="rating-star" data-rating="<%= i %>">★</span>
+                <% } %>
+                <input type="hidden" name="rate" class="rating-value" value="">
+              </div>
+              <!-- Olmazsa buraya kadar sil -->
+              <input type="hidden" name="title" value="<%= result.title %>">
+              <input type="hidden" name="poster" value="<%= result.poster_path %>">
+              <input type="hidden" name="description" value="<%= result.overview %>">
+              <input type="hidden" name="release_date" value="<%= result.release_date %>">
+            </form>
+            <% }) %>
           </div>
-          <!-- Olmazsa buraya kadar sil -->
-          <button class="add-btn" type="submit">Submit Rating</button>
-          <input type="hidden" name="title" value="<%= result.title %>">
-          <input type="hidden" name="poster" value="<%= result.poster_path %>">
-          <input type="hidden" name="description" value="<%= result.overview %>">
-          <input type="hidden" name="release_date" value="<%= result.release_date %>">
-          
-        </form>
-      <% }) %>
-      </div>
-    </div>
+        </div>
       <!-- Show added AMTss -->
 
       <% } else if (locals.data && locals.data.length > 0 ) { %>
@@ -54,10 +52,19 @@
       <% data.forEach(data => { %>
         <form action="/delete" method="post" class="grid-item">
           <h2 class="title"><%= data.title %></h2>
-          <img class="poster" src="<%= data.poster_path %>" alt="<%= data.title %> poster">
+          <img class="poster" src="<%= data.poster_path %>" alt="<%= data.title %> poster" > 
+          <div class="rated">
+            <% for (let i = data.rate; i > 0; i--) { %>
+              <span class="active-star">★</span>
+              <% } %>
+              <% for (let i = 10 - data.rate; i > 0; i--) { %>
+                <span class="passive-star">★</span>
+                <% } %>
+            </div>
           <p class="description"> <span class="bold">Description:</span> <%= data.overview %></p>
           <p class="date"> <span class="bold">Release Date:</span> <%= data.release_date %></p>
           <p class="date"> <span class="bold">You have added this on:</span> <%= data.added_date %></p>
+          
           <button class="dlt-btn" type="submit">Delete</button>
           <input type="hidden" name="del" value="<%= data.id %>">
         </form>
@@ -74,5 +81,21 @@
 
  
     <%-include("partials/footer.ejs") %>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.rating-star').forEach(star => {
+          star.addEventListener('click', (e) => {
+            const rating = e.target.getAttribute('data-rating');
+            const form = e.target.closest('form');
+            const ratingValue = form.querySelector('.rating-value');
+            ratingValue.value = parseInt(rating);
+            // Submit the form
+            form.submit();
+          });
+        });
+      });
+    </script>
+
   </body>
 </html>

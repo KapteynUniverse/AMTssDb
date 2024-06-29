@@ -60,6 +60,7 @@ app.get("/", async (req, res) => {
       added_date: obj.added_date.toLocaleDateString("tr-TR").slice(0, 10),
       poster_path: obj.url,
       id: obj.id,
+      rate: obj.rating,
     }));
 
     res.render("index", { data: data });
@@ -190,12 +191,14 @@ app.post("/add", async (req, res) => {
   const { title, poster, description, release_date, rate } = req.body;
   try {
     await db.query(
-      `INSERT INTO AMTsDb (title, description, url, release_date) VALUES ($1, $2, $3, $4)`,
-      [title, description, poster, release_date]
+      `INSERT INTO AMTsDb (title, url, description, release_date, rating) VALUES ($1, $2, $3, $4, $5)`,
+      [title, poster, description, release_date, rate]
     );
+    console.log(req.body);
     res.redirect("/");
   } catch (err) {
-    console.log(err);
+    console.error(err);
+    res.status(500).send("Error saving data");
   }
 });
 
@@ -255,7 +258,7 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, cb) => {
       try {
-        console.log(profile);
+        // console.log(profile);
         const result = await db.query("SELECT * FROM users WHERE email = $1", [
           profile.email,
         ]);

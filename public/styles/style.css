@@ -127,7 +127,17 @@ h1 {
   color: orange;
 }
 
-.rating-star.active {
+.rated span {
+  font-size: 32px;
+}
+
+.rated {
+  display: flex;
+
+  justify-content: space-evenly;
+}
+
+.active-star {
   color: orange;
 }
 

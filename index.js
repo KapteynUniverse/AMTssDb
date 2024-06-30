@@ -61,6 +61,7 @@ app.get("/", async (req, res) => {
       poster_path: obj.url,
       id: obj.id,
       rate: obj.rating,
+      comment: obj.comment,
     }));
 
     res.render("index", { data: data });
@@ -188,11 +189,11 @@ app.get("/search", async (req, res) => {
 // Add and rate? selected AMTs to the database
 
 app.post("/add", async (req, res) => {
-  const { title, poster, description, release_date, rate } = req.body;
+  const { title, poster, description, release_date, rate, comment } = req.body;
   try {
     await db.query(
-      `INSERT INTO AMTsDb (title, url, description, release_date, rating) VALUES ($1, $2, $3, $4, $5)`,
-      [title, poster, description, release_date, rate]
+      `INSERT INTO AMTsDb (title, url, description, release_date, rating, comment) VALUES ($1, $2, $3, $4, $5, $6)`,
+      [title, poster, description, release_date, rate, comment]
     );
     console.log(req.body);
     res.redirect("/");
@@ -292,5 +293,3 @@ app.listen(port, () => {
 // Puştlar bizim logomuzu koyacaksın uygulamana diyor
 
 // https://www.themoviedb.org/about/logos-attribution
-
-// Eklenenler arasından arama yapma. Eklenenlere yıldız verip puanı database e ekleme, login/register fonksiyonu, belki navbar

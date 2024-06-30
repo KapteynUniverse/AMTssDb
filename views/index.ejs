@@ -24,17 +24,18 @@
             <% results.forEach(result => { %>
             <form action="/add" method="post" class="grid-item">
               <h2 class="title"><%= result.title %></h2>
+              <div class="poster-card">
               <img class="poster" src="<%= result.poster_path %>" alt="<%= result.title %> poster">
+            </div>
               <p class="description"> <span class="bold">Description:</span> <%= result.overview %></p>
               <p class="date"> <span class="bold">Release Date:</span> <%= result.release_date %></p>
-              <!-- Olmazsa buradan -->
+          <input type="text" name="comment" value="" placeholder="Write a comment then click a star to rate"> 
               <div class="ratings">
                 <% for (let i = 10; i > 0; i--) { %>
                 <span class="rating-star" data-rating="<%= i %>">★</span>
                 <% } %>
                 <input type="hidden" name="rate" class="rating-value" value="">
               </div>
-              <!-- Olmazsa buraya kadar sil -->
               <input type="hidden" name="title" value="<%= result.title %>">
               <input type="hidden" name="poster" value="<%= result.poster_path %>">
               <input type="hidden" name="description" value="<%= result.overview %>">
@@ -52,6 +53,7 @@
       <% data.forEach(data => { %>
         <form action="/delete" method="post" class="grid-item">
           <h2 class="title"><%= data.title %></h2>
+          <div class="poster-card" >
           <img class="poster" src="<%= data.poster_path %>" alt="<%= data.title %> poster" > 
           <div class="rated">
             <% for (let i = data.rate; i > 0; i--) { %>
@@ -61,10 +63,11 @@
                 <span class="passive-star">★</span>
                 <% } %>
             </div>
+          </div>
           <p class="description"> <span class="bold">Description:</span> <%= data.overview %></p>
           <p class="date"> <span class="bold">Release Date:</span> <%= data.release_date %></p>
           <p class="date"> <span class="bold">You have added this on:</span> <%= data.added_date %></p>
-          
+          <p class="comment"><span class="bold">Your comment:</span><%= data.comment %></p>
           <button class="dlt-btn" type="submit">Delete</button>
           <input type="hidden" name="del" value="<%= data.id %>">
         </form>
@@ -96,6 +99,5 @@
         });
       });
     </script>
-
   </body>
 </html>

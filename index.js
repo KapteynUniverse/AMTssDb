@@ -52,19 +52,28 @@ db.connect();
 
 app.get("/", async (req, res) => {
   if (req.isAuthenticated()) {
-    const database = await db.query(`SELECT * FROM AMTsDb`);
-    const data = database.rows.map((obj) => ({
-      title: obj.title,
-      overview: obj.description,
-      release_date: obj.release_date.toLocaleDateString("tr-TR").slice(0, 10),
-      added_date: obj.added_date.toLocaleDateString("tr-TR").slice(0, 10),
-      poster_path: obj.url,
-      id: obj.id,
-      rate: obj.rating,
-      comment: obj.comment,
-    }));
+    const user_id = req.user.id; // Assuming user ID is stored in req.user after login
+    try {
+      const database = await db.query(
+        `SELECT * FROM AMTsDb WHERE user_id = $1`,
+        [user_id]
+      );
+      const data = database.rows.map((obj) => ({
+        title: obj.title,
+        overview: obj.description,
+        release_date: obj.release_date.toLocaleDateString("tr-TR").slice(0, 10),
+        added_date: obj.added_date.toLocaleDateString("tr-TR").slice(0, 10),
+        poster_path: obj.url,
+        id: obj.id,
+        rate: obj.rating,
+        comment: obj.comment,
+      }));
 
-    res.render("index", { data: data });
+      res.render("index", { data: data });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Error fetching data");
+    }
   } else {
     res.render("login-register");
   }
@@ -190,10 +199,11 @@ app.get("/search", async (req, res) => {
 
 app.post("/add", async (req, res) => {
   const { title, poster, description, release_date, rate, comment } = req.body;
+  const user_id = req.user.id;
   try {
     await db.query(
-      `INSERT INTO AMTsDb (title, url, description, release_date, rating, comment) VALUES ($1, $2, $3, $4, $5, $6)`,
-      [title, poster, description, release_date, rate, comment]
+      `INSERT INTO AMTsDb (user_id, title, url, description, release_date, rating, comment) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [user_id, title, poster, description, release_date, rate, comment]
     );
     console.log(req.body);
     res.redirect("/");

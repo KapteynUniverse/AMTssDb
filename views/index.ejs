@@ -2,8 +2,9 @@
   <body>
 
     <!-- Searchbar -->
-
+    
       <form action="/search" method="get" class="search-bar">
+        <a class="logout" href="/logout" role="button">Log Out</a>
         <input
           type="text"
           placeholder="Search for Movie/Anime/TV Show"
@@ -11,7 +12,7 @@
         />
         <button type="submit"><i class="fa fa-search"></i></button>
 
-          <a class="logout" href="/logout" role="button">Log Out</a>
+          
 
       </form>
       
@@ -19,7 +20,7 @@
     
       <% if (locals.results) { %>
         <div>
-          <h1 class="title">RESULTS:</h1>
+          <h1 class="title">RESULTS</h1>
           <div class="grid-container">
             <% results.forEach(result => { %>
             <form action="/add" method="post" class="grid-item">
@@ -67,7 +68,11 @@
           <p class="description"> <span class="bold">Description:</span> <%= data.overview %></p>
           <p class="date"> <span class="bold">Release Date:</span> <%= data.release_date %></p>
           <p class="date"> <span class="bold">You have added this on:</span> <%= data.added_date %></p>
+          <% if (locals.data.comment) { %>
           <p class="comment"><span class="bold">Your comment:</span><%= data.comment %></p>
+          <% } else {%>
+            <p class="comment"><span class="bold">You did not give a comment for this A/M/Ts</span></p>
+            <% } %>
           <button class="dlt-btn" type="submit">Delete</button>
           <input type="hidden" name="del" value="<%= data.id %>">
         </form>
@@ -78,7 +83,8 @@
      
   <% } else { %>
     
-    <p>Belki bir şey ekleriz</p>
+    <h1 class="title">&#11025;Search/Comment/Rate &#11023;</h1>
+
 
   <% } %>
 

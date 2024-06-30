@@ -12,7 +12,7 @@ body {
 .search-bar {
   display: flex;
   align-items: center;
-  padding-top: 10px;
+  padding: 10px;
 }
 
 input[type="text"] {
@@ -224,6 +224,17 @@ h1 {
 
 .footer {
   text-align: center;
+}
+
+body::-webkit-scrollbar {
+  width: 0.25rem;
+}
+
+body::-webkit-scrollbar-track {
+  background: #1e1e24;
+}
+body::-webkit-scrollbar-thumb {
+  background: #6649b8;
 }
 
 @media screen and (max-width: 1400px) {

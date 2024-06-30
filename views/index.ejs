@@ -15,7 +15,6 @@
           
 
       </form>
-      
       <!-- Show search results -->
     
       <% if (locals.results) { %>
@@ -41,9 +40,11 @@
               <input type="hidden" name="poster" value="<%= result.poster_path %>">
               <input type="hidden" name="description" value="<%= result.overview %>">
               <input type="hidden" name="release_date" value="<%= result.release_date %>">
+              <input type="hidden" name="type" value="<%= result.type %>">
             </form>
             <% }) %>
           </div>
+          <a href="#" class="up-arrow"><img src="assets/icons/up.png" alt="up-arrow"></a>
         </div>
       <!-- Show added AMTss -->
 
@@ -68,7 +69,7 @@
           <p class="description"> <span class="bold">Description:</span> <%= data.overview %></p>
           <p class="date"> <span class="bold">Release Date:</span> <%= data.release_date %></p>
           <p class="date"> <span class="bold">You have added this on:</span> <%= data.added_date %></p>
-          <% if (locals.data.comment) { %>
+          <% if (data.comment) { %>
           <p class="comment"><span class="bold">Your comment:</span><%= data.comment %></p>
           <% } else {%>
             <p class="comment"><span class="bold">You did not give a comment for this A/M/Ts</span></p>
@@ -78,7 +79,7 @@
         </form>
       <% }) %>
     </div>
-
+    <a href="#" class="up-arrow"><img src="assets/icons/up.png" alt="up-arrow"></a>
     <!-- Login/Register -->
      
   <% } else { %>

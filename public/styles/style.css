@@ -2,11 +2,27 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   padding: 0;
   font-family: Arial, Helvetica, sans-serif;
   background: linear-gradient(45deg, #ffd195, #ffb283);
+}
+
+.up-arrow {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.up-arrow:hover {
+  opacity: 0.7;
+  cursor: pointer;
 }
 
 .search-bar {

@@ -186,7 +186,9 @@ app.get("/search", async (req, res) => {
         media_type: obj.media_type,
         release_date: obj.release_date || obj.first_air_date,
         poster_path: IMG_URL + obj.poster_path,
+        type: obj.media_type,
       }));
+
     res.render("index", {
       results: results,
     });
@@ -198,14 +200,14 @@ app.get("/search", async (req, res) => {
 // Add and rate? selected AMTs to the database
 
 app.post("/add", async (req, res) => {
-  const { title, poster, description, release_date, rate, comment } = req.body;
+  const { title, poster, description, release_date, rate, comment, type } =
+    req.body;
   const user_id = req.user.id;
   try {
     await db.query(
-      `INSERT INTO AMTsDb (user_id, title, url, description, release_date, rating, comment) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-      [user_id, title, poster, description, release_date, rate, comment]
+      `INSERT INTO AMTsDb (user_id, title, url, description, release_date, rating, comment, type) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      [user_id, title, poster, description, release_date, rate, comment, type]
     );
-    console.log(req.body);
     res.redirect("/");
   } catch (err) {
     console.error(err);

@@ -141,6 +141,22 @@ app.get("/tv-shows", async (req, res) => {
   }
 });
 
+// Show other user profiles
+
+app.get("/users", async (req, res) => {
+  try {
+    const result = await db.query(`SELECT email FROM users`);
+    const users = result.rows.map((obj) => ({
+      user: obj.email,
+    }));
+
+    res.render("users", { users: users });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching data");
+  }
+});
+
 app.get("/login-register", (req, res) => {
   res.render("login-register");
 });
@@ -259,6 +275,32 @@ app.get("/search", async (req, res) => {
   }
 });
 
+// Go to an user database
+
+app.get("/:email", async (req, res) => {
+  const { email } = req.params;
+  try {
+    const result = await db.query(
+      `SELECT * FROM AMTsDb WHERE user_id = (SELECT id FROM users WHERE email = $1)`,
+      [email]
+    );
+    const data = result.rows.map((obj) => ({
+      title: obj.title,
+      overview: obj.description,
+      release_date: obj.release_date.toLocaleDateString("tr-TR").slice(0, 10),
+      added_date: obj.added_date.toLocaleDateString("tr-TR").slice(0, 10),
+      poster_path: obj.url,
+      id: obj.id,
+      rate: obj.rating,
+      comment: obj.comment,
+    }));
+    res.render("userAMTs", { data: data, user: email });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching data");
+  }
+});
+
 // Add and rate selected AMTs to the database
 
 app.post("/add", async (req, res) => {
@@ -289,6 +331,48 @@ app.post("/delete", async (req, res) => {
   }
 });
 
+// Update page
+
+app.post("/to-update", async (req, res) => {
+  const user_id = req.user.id;
+  try {
+    const database = await db.query(
+      `SELECT * FROM AMTsDb WHERE user_id = $1 AND id = $2`,
+      [user_id, req.body.del]
+    );
+    const data = database.rows[0];
+    res.render("update", {
+      title: data.title,
+      overview: data.description,
+      release_date: data.release_date,
+      added_date: data.added_date,
+      poster_path: data.url,
+      id: data.id,
+      rate: data.rating,
+      comment: data.comment,
+      type: data.type,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching data");
+  }
+});
+
+// Update selected AMTs
+app.post("/update", async (req, res) => {
+  const { id, rate, comment } = req.body;
+  const user_id = req.user.id;
+  try {
+    await db.query(
+      `UPDATE AMTsDb SET rating = $1, comment = $2 WHERE user_id = $3 AND id = $4`,
+      [rate, comment, user_id, id]
+    );
+    res.redirect("/");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error saving data");
+  }
+});
 passport.use(
   "local",
   new Strategy(

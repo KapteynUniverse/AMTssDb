@@ -1,0 +1,66 @@
+<%- include("partials/header.ejs") %>
+  <body>
+
+    <form action="/search" method="get" class="search-bar">
+        <nav>
+          <button class="menu" disabled>Menu</button>
+          <div class="menu-content">
+            <a  href="/">Home</a>
+            <a  href="/profile">Profile</a>
+            <a  href="/movies">Movies</a>
+            <a  href="/tv-shows">TV Shows</a>
+            <a  href="/users">Users</a>
+            <a  href="/logout" role="button">Logout</a>
+          </div>
+        </nav>
+        <input
+          type="text"
+          placeholder="Search for Movie/Anime/TV Show"
+          name="search"
+        />
+        <button type="submit"><i class="fa fa-search"></i></button>
+      </form>
+    
+    <h1 class="title">AMTs for <%= user %></h1>
+    <div class="grid-container">
+      <% data.forEach(item => { %>
+      <div class="grid-item">
+        <h2 class="title"><%= item.title %></h2>
+        <div class="poster-card">
+          <img
+            class="poster"
+            src="<%= item.poster_path %>"
+            alt="<%= item.title %> poster"
+          />
+          <div class="rated">
+            <% for (let i = item.rate; i > 0; i--) { %>
+              <span class="active-star">★</span>
+              <% } %>
+              <% for (let i = 10 - item.rate; i > 0; i--) { %>
+                <span class="passive-star">★</span>
+                <% } %>
+            </div>
+        </div>
+        <p class="description">
+          <span class="bold">Description:</span> <%= item.overview %>
+        </p>
+        <p class="date">
+          <span class="bold">Release Date:</span> <%= item.release_date %>
+        </p>
+        <p class="date">
+          <span class="bold">Added Date:</span> <%= item.added_date %>
+        </p>
+        <% if (item.comment) { %>
+            <p class="comment"><span class="bold"><%= user %>'s comment: </span><%= item.comment %></p>
+            <% } else {%>
+              <p class="comment"><span class="bold"><%= user %> did not give a comment for this A/M/Ts</span></p>
+              <% } %>
+      </div>
+      <% }) %>
+    </div>
+    <a href="#" class="up-arrow"
+      ><img src="assets/icons/up.png" alt="up-arrow"
+    /></a>
+    <%-include("partials/footer.ejs") %>
+  </body>
+</html>

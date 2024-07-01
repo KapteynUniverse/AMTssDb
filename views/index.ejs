@@ -5,11 +5,13 @@
     
       <form action="/search" method="get" class="search-bar">
         <nav>
-          <button class="menu">Menu</button>
+          <button class="menu" disabled>Menu</button>
           <div class="menu-content">
             <a  href="/">Home</a>
+            <a  href="/profile">Profile</a>
             <a  href="/movies">Movies</a>
             <a  href="/tv-shows">TV Shows</a>
+            <a  href="/users">Users</a>
             <a  href="/logout" role="button">Logout</a>
           </div>
         </nav>
@@ -78,11 +80,14 @@
           <p class="date"> <span class="bold">Release Date:</span> <%= data.release_date %></p>
           <p class="date"> <span class="bold">You have added this on:</span> <%= data.added_date %></p>
           <% if (data.comment) { %>
-          <p class="comment"><span class="bold">Your comment:</span><%= data.comment %></p>
+          <p class="comment"><span class="bold">Your comment: </span><%= data.comment %></p>
           <% } else {%>
             <p class="comment"><span class="bold">You did not give a comment for this A/M/Ts</span></p>
             <% } %>
+            <div class="buttons">
           <button class="dlt-btn" type="submit">Delete</button>
+          <button class="upd-btn" type="submit" formaction="/to-update">Update</button>
+        </div>
           <input type="hidden" name="del" value="<%= data.id %>">
         </form>
       <% }) %>

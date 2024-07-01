@@ -1,0 +1,65 @@
+<%- include("partials/header.ejs") %>
+  <body>
+
+    <!-- Searchbar -->
+    
+      <form action="/search" method="get" class="search-bar">
+        <nav>
+          <button class="menu" disabled>Menu</button>
+          <div class="menu-content">
+            <a  href="/">Home</a>
+            <a  href="/movies">Movies</a>
+            <a  href="/tv-shows">TV Shows</a>
+            <a  href="/users">Users</a>
+            <a  href="/logout" role="button">Logout</a>
+          </div>
+        </nav>
+        <input
+          type="text"
+          placeholder="Search for Movie/Anime/TV Show"
+          name="search"
+        />
+        <button type="submit"><i class="fa fa-search"></i></button>
+      </form>
+      
+      <!-- Show search results -->
+    
+    
+       
+          <h1 class="title">UPDATE YOUR COMMENT OR/AND RATING</h1>
+          <div class="center-container">
+            <form action="/update" method="post" class="update-flex">
+              <h2 class="title"><%= title %></h2>
+              <div class="poster-card">
+              <img class="poster" src="<%= poster_path %>" alt="<%= title %> poster">
+            </div>
+              <p class="description"> <span class="bold">Description:</span> <%= overview %></p>
+              <p class="date"> <span class="bold">Release Date:</span> <%= release_date %></p>
+          <input type="text" name="comment" value="" placeholder="Write a comment (if you want) then click a star to rate"> 
+              <div class="ratings">
+                <% for (let i = 10; i > 0; i--) { %>
+                <span class="rating-star" data-rating="<%= i %>">★</span>
+                <% } %>
+                <input type="hidden" name="rate" class="rating-value" value="">
+                <input type="hidden" name="id" value="<%= id %>">
+              </div>
+            </form>     
+        </div>
+ 
+    <%-include("partials/footer.ejs") %>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.rating-star').forEach(star => {
+          star.addEventListener('click', (e) => {
+            const rating = e.target.getAttribute('data-rating');
+            const form = e.target.closest('form');
+            const ratingValue = form.querySelector('.rating-value');
+            ratingValue.value = parseInt(rating);
+            form.submit();
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -128,7 +128,9 @@ h1 {
   padding: 10px;
   align-items: stretch;
 }
-.grid-item {
+
+.grid-item,
+.update-flex {
   display: flex;
   flex-direction: column;
   padding: 20px;
@@ -148,7 +150,7 @@ h1 {
 
 .grid-item > .poster-card,
 .grid-item > .add-btn,
-.grid-item > .dlt-btn,
+.grid-item > .buttons,
 .grid-item > .title {
   align-self: center;
 }
@@ -207,7 +209,8 @@ h1 {
 }
 
 .add-btn,
-.dlt-btn {
+.dlt-btn,
+.upd-btn {
   position: relative;
   background: #fff;
   padding: 10px;
@@ -287,6 +290,20 @@ h1 {
 
 .btn-block:hover {
   background-color: #357ae8;
+}
+
+.update-flex {
+  max-width: 450px;
+}
+.center-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.poster-card {
+  justify-content: center;
 }
 
 .footer {

@@ -4,7 +4,15 @@
     <!-- Searchbar -->
     
       <form action="/search" method="get" class="search-bar">
-        <a class="logout" href="/logout" role="button">Log Out</a>
+        <nav>
+          <button class="menu">Menu</button>
+          <div class="menu-content">
+            <a  href="/">Home</a>
+            <a  href="/movies">Movies</a>
+            <a  href="/tv-shows">TV Shows</a>
+            <a  href="/logout" role="button">Logout</a>
+          </div>
+        </nav>
         <input
           type="text"
           placeholder="Search for Movie/Anime/TV Show"
@@ -12,7 +20,7 @@
         />
         <button type="submit"><i class="fa fa-search"></i></button>
 
-          
+     
 
       </form>
       <!-- Show search results -->
@@ -29,7 +37,7 @@
             </div>
               <p class="description"> <span class="bold">Description:</span> <%= result.overview %></p>
               <p class="date"> <span class="bold">Release Date:</span> <%= result.release_date %></p>
-          <input type="text" name="comment" value="" placeholder="Write a comment then click a star to rate"> 
+          <input type="text" name="comment" value="" placeholder="Write a comment (if you want) then click a star to rate"> 
               <div class="ratings">
                 <% for (let i = 10; i > 0; i--) { %>
                 <span class="rating-star" data-rating="<%= i %>">★</span>
@@ -85,6 +93,8 @@
   <% } else { %>
     
     <h1 class="title">&#11025;Search/Comment/Rate &#11023;</h1>
+    <h2 class="title">You have not added anything yet.</h2>
+    
 
 
   <% } %>
@@ -100,7 +110,6 @@
             const form = e.target.closest('form');
             const ratingValue = form.querySelector('.rating-value');
             ratingValue.value = parseInt(rating);
-            // Submit the form
             form.submit();
           });
         });

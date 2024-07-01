@@ -25,6 +25,57 @@ body {
   cursor: pointer;
 }
 
+.menu {
+  padding: 10px;
+  background-color: #4285f4;
+  color: white;
+  text-align: center;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  width: 96px;
+}
+
+nav {
+  position: relative;
+  display: inline-block;
+}
+
+.menu-content {
+  display: none;
+  position: absolute;
+  background-color: #4285f4;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.menu-content a {
+  color: white;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.menu-content a:hover {
+  background-color: #357ae8;
+  border-radius: 5px;
+}
+
+nav:hover .menu-content {
+  display: block;
+  color: white;
+  text-align: center;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+nav:hover .menu {
+  background-color: #357ae8;
+}
+
 .search-bar {
   display: flex;
   align-items: center;

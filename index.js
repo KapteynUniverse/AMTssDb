@@ -52,10 +52,72 @@ db.connect();
 
 app.get("/", async (req, res) => {
   if (req.isAuthenticated()) {
-    const user_id = req.user.id; // Assuming user ID is stored in req.user after login
+    const user_id = req.user.id;
     try {
       const database = await db.query(
         `SELECT * FROM AMTsDb WHERE user_id = $1`,
+        [user_id]
+      );
+      const data = database.rows.map((obj) => ({
+        title: obj.title,
+        overview: obj.description,
+        release_date: obj.release_date.toLocaleDateString("tr-TR").slice(0, 10),
+        added_date: obj.added_date.toLocaleDateString("tr-TR").slice(0, 10),
+        poster_path: obj.url,
+        id: obj.id,
+        rate: obj.rating,
+        comment: obj.comment,
+      }));
+
+      res.render("index", { data: data });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Error fetching data");
+    }
+  } else {
+    res.render("login-register");
+  }
+});
+
+// Show only added movies
+
+app.get("/movies", async (req, res) => {
+  if (req.isAuthenticated()) {
+    const user_id = req.user.id;
+    try {
+      const database = await db.query(
+        `SELECT * FROM AMTsDb WHERE user_id = $1 AND type = 'movie'`,
+        [user_id]
+      );
+      const data = database.rows.map((obj) => ({
+        title: obj.title,
+        overview: obj.description,
+        release_date: obj.release_date.toLocaleDateString("tr-TR").slice(0, 10),
+        added_date: obj.added_date.toLocaleDateString("tr-TR").slice(0, 10),
+        poster_path: obj.url,
+        id: obj.id,
+        rate: obj.rating,
+        comment: obj.comment,
+      }));
+
+      res.render("index", { data: data });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Error fetching data");
+    }
+  } else {
+    res.render("login-register");
+  }
+});
+
+// Show only added TV shows
+
+app.get("/tv-shows", async (req, res) => {
+  if (req.isAuthenticated()) {
+    const user_id = req.user.id;
+    try {
+      const database = await db.query(
+        `SELECT * FROM AMTsDb WHERE user_id = $1 AND type = 'tv'`,
         [user_id]
       );
       const data = database.rows.map((obj) => ({
@@ -197,7 +259,7 @@ app.get("/search", async (req, res) => {
   }
 });
 
-// Add and rate? selected AMTs to the database
+// Add and rate selected AMTs to the database
 
 app.post("/add", async (req, res) => {
   const { title, poster, description, release_date, rate, comment, type } =
@@ -271,7 +333,6 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, cb) => {
       try {
-        // console.log(profile);
         const result = await db.query("SELECT * FROM users WHERE email = $1", [
           profile.email,
         ]);

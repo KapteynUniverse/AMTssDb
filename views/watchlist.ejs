@@ -1,0 +1,58 @@
+<%- include("partials/header.ejs") %>
+  <body>
+
+    <!-- Searchbar -->
+    
+      <form action="/search" method="get" class="search-bar">
+       
+        <input
+          type="text"
+          placeholder="Search for Movie/Anime/TV Show"
+          name="search"
+        />
+        <button type="submit"><i class="fa fa-search"></i></button>
+        <nav>
+            <button class="menu" disabled>Menu</button>
+            <div class="menu-content">
+              <a  href="/">Home</a>
+              <a  href="/watchlist">Watchlist</a>
+              <a  href="/movies">Movies</a>
+              <a  href="/tv-shows">TV Shows</a>
+              <a  href="/users">Users</a>
+              <a  href="/logout" role="button">Logout</a>
+            </div>
+          </nav>
+      </form>
+      
+      <% if (locals.data && locals.data.length > 0 ) { %>
+        
+        <h1 class="title">Your Watchlist</h1>
+    <div class="grid-container">
+      <% data.forEach(data => { %>
+        <form action="/to-update" method="post" class="grid-item"> 
+            <button class="watchlist-btn" type="submit"><img src="assets/icons/bookmark.png" alt="watched it"><span class="invisible">Click to add as watched</span></button>
+            
+          <h2 class="title"><%= data.title %></h2>
+          <div class="poster-card" >
+          <img class="poster" src="<%= data.poster_path %>" alt="<%= data.title %> poster" > 
+          </div>
+          <p class="description"> <span class="bold">Description:</span> <%= data.overview %></p>
+          <p class="date"> <span class="bold">Release Date:</span> <%= data.release_date %></p>
+          <input type="hidden" name="del" value="<%= data.id %>">
+        </form>
+      <% }) %>
+    </div>
+    <a href="#" class="up-arrow"><img src="assets/icons/up.png" alt="up-arrow"></a>
+     
+  <% } else { %>
+    
+    <h2 class="title">You have not added anything yet.</h2>
+    
+
+
+  <% } %>
+ 
+    <%-include("partials/footer.ejs") %>
+
+  </body>
+</html>

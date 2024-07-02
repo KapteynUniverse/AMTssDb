@@ -1,0 +1,53 @@
+<%- include("partials/header.ejs") %>
+  <body>
+
+    <!-- Searchbar -->
+    
+      <form action="/search" method="get" class="search-bar">
+       
+        <input
+          type="text"
+          placeholder="Search for Movie/Anime/TV Show"
+          name="search"
+        />
+        <button type="submit"><i class="fa fa-search"></i></button>
+        <nav>
+          <button class="menu" disabled>Menu</button>
+          <div class="menu-content">
+            <a  href="/">Home</a>
+            <a  href="/profile">Profile</a>
+            <a  href="/movies">Movies</a>
+            <a  href="/tv-shows">TV Shows</a>
+            <a  href="/users">Users</a>
+            <a  href="/logout" role="button">Logout</a>
+          </div>
+        </nav>
+      </form>
+
+      
+      <div class="flexbox">
+        <div class="form-container">
+          <div class="flex-card">
+            <h1 class="title">Update Your Profile</h1>
+            <form action="/update-profile" method="POST" enctype="multipart/form-data">
+              <div class="flex-item">
+                <label for="username">Name:</label>
+                <input type="text" name="username" class="input-field" required />
+              </div>
+              <div class="flex-item">
+              <label for="fileUpload">Upload Picture:</label><br>
+              <input type="file" id="fileUpload" name="fileUpload" accept="image/*"><br>
+              <input type="submit" value="Upload">
+              </div>
+              <button type="submit" class="login">Confirm</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+       
+    <%-include("partials/footer.ejs") %>
+
+    
+  </body>
+</html>

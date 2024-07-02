@@ -142,6 +142,37 @@ h1 {
   min-width: 450px;
 }
 
+.watchlist-btn {
+  position: absolute;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.invisible {
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 4px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 105%;
+  opacity: 0;
+  margin-left: -55px;
+  transition: opacity 0.3s;
+}
+
+.watchlist-btn:hover {
+  background: none;
+}
+
+.watchlist-btn:hover .invisible {
+  opacity: 1;
+}
+
 .grid-item > .poster-card,
 .grid-item > .description,
 .grid-item > .date {

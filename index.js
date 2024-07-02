@@ -55,7 +55,7 @@ app.get("/", async (req, res) => {
     const user_id = req.user.id;
     try {
       const database = await db.query(
-        `SELECT * FROM AMTsDb WHERE user_id = $1`,
+        `SELECT * FROM AMTsDb WHERE user_id = $1 AND watchlist = 'no'`,
         [user_id]
       );
       const data = database.rows.map((obj) => ({
@@ -86,7 +86,7 @@ app.get("/movies", async (req, res) => {
     const user_id = req.user.id;
     try {
       const database = await db.query(
-        `SELECT * FROM AMTsDb WHERE user_id = $1 AND type = 'movie'`,
+        `SELECT * FROM AMTsDb WHERE user_id = $1 AND type = 'movie' AND watchlist = 'no'`,
         [user_id]
       );
       const data = database.rows.map((obj) => ({
@@ -117,7 +117,7 @@ app.get("/tv-shows", async (req, res) => {
     const user_id = req.user.id;
     try {
       const database = await db.query(
-        `SELECT * FROM AMTsDb WHERE user_id = $1 AND type = 'tv'`,
+        `SELECT * FROM AMTsDb WHERE user_id = $1 AND type = 'tv' AND watchlist = 'no'`,
         [user_id]
       );
       const data = database.rows.map((obj) => ({
@@ -151,6 +151,27 @@ app.get("/users", async (req, res) => {
     }));
 
     res.render("users", { users: users });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching data");
+  }
+});
+
+app.get("/watchlist", async (req, res) => {
+  const user_id = req.user.id;
+  try {
+    const database = await db.query(
+      `SELECT * FROM AMTsDb WHERE user_id = $1 AND watchlist = 'yes'`,
+      [user_id]
+    );
+    const data = database.rows.map((obj) => ({
+      title: obj.title,
+      overview: obj.description,
+      release_date: obj.release_date.toLocaleDateString("tr-TR").slice(0, 10),
+      poster_path: obj.url,
+      id: obj.id,
+    }));
+    res.render("watchlist", { data: data });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error fetching data");
@@ -281,7 +302,7 @@ app.get("/:email", async (req, res) => {
   const { email } = req.params;
   try {
     const result = await db.query(
-      `SELECT * FROM AMTsDb WHERE user_id = (SELECT id FROM users WHERE email = $1)`,
+      `SELECT * FROM AMTsDb WHERE user_id = (SELECT id FROM users WHERE email = $1 AND watchlist = 'no')`,
       [email]
     );
     const data = result.rows.map((obj) => ({
@@ -309,7 +330,7 @@ app.post("/add", async (req, res) => {
   const user_id = req.user.id;
   try {
     await db.query(
-      `INSERT INTO AMTsDb (user_id, title, url, description, release_date, rating, comment, type) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      `INSERT INTO AMTsDb (user_id, title, url, description, release_date, rating, comment, type, watchlist) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'no')`,
       [user_id, title, poster, description, release_date, rate, comment, type]
     );
     res.redirect("/");
@@ -331,7 +352,7 @@ app.post("/delete", async (req, res) => {
   }
 });
 
-// Update page
+// Update page (AMTss)
 
 app.post("/to-update", async (req, res) => {
   const user_id = req.user.id;
@@ -364,7 +385,7 @@ app.post("/update", async (req, res) => {
   const user_id = req.user.id;
   try {
     await db.query(
-      `UPDATE AMTsDb SET rating = $1, comment = $2 WHERE user_id = $3 AND id = $4`,
+      `UPDATE AMTsDb SET rating = $1, comment = $2, watchlist = 'no' WHERE user_id = $3 AND id = $4`,
       [rate, comment, user_id, id]
     );
     res.redirect("/");
@@ -373,6 +394,24 @@ app.post("/update", async (req, res) => {
     res.status(500).send("Error saving data");
   }
 });
+
+//Add to watchlist
+
+app.post("/watchlist", async (req, res) => {
+  const { title, poster, description, release_date, type } = req.body;
+  const user_id = req.user.id;
+  try {
+    await db.query(
+      `INSERT INTO AMTsDb (user_id, title, url, description, release_date, type, watchlist) VALUES ($1, $2, $3, $4, $5, $6, 'yes')`,
+      [user_id, title, poster, description, release_date, type]
+    );
+    res.redirect("/watchlist");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error saving data");
+  }
+});
+
 passport.use(
   "local",
   new Strategy(

@@ -4,17 +4,7 @@
     <!-- Searchbar -->
     
       <form action="/search" method="get" class="search-bar">
-        <nav>
-          <button class="menu" disabled>Menu</button>
-          <div class="menu-content">
-            <a  href="/">Home</a>
-            <a  href="/profile">Profile</a>
-            <a  href="/movies">Movies</a>
-            <a  href="/tv-shows">TV Shows</a>
-            <a  href="/users">Users</a>
-            <a  href="/logout" role="button">Logout</a>
-          </div>
-        </nav>
+        
         <input
           type="text"
           placeholder="Search for Movie/Anime/TV Show"
@@ -22,7 +12,17 @@
         />
         <button type="submit"><i class="fa fa-search"></i></button>
 
-     
+        <nav>
+          <button class="menu" disabled>Menu</button>
+          <div class="menu-content">
+            <a  href="/">Home</a>
+            <a  href="/watchlist">Watchlist</a> <!--sayfa ayarla, isim ekleyebilsinler, usersda mail yerine isim gözüksün add kısmına add to watchlist koy watchlistekini de izledim deyince ayrı bir sayfada comment rate açılsın-->
+            <a  href="/movies">Movies</a>
+            <a  href="/tv-shows">TV Shows</a>
+            <a  href="/users">Users</a>
+            <a  href="/logout" role="button">Logout</a>
+          </div>
+        </nav>
 
       </form>
       <!-- Show search results -->
@@ -32,13 +32,15 @@
           <h1 class="title">RESULTS</h1>
           <div class="grid-container">
             <% results.forEach(result => { %>
-            <form action="/add" method="post" class="grid-item">
+            <form action="/add" method="post" class="grid-item">     
+              <button class="watchlist-btn" type="submit" formaction="/watchlist"><img src="assets/icons/bookmark.png" alt="add-to-watchlist"><span class="invisible">Add to Watchlist</span></button>
               <h2 class="title"><%= result.title %></h2>
               <div class="poster-card">
               <img class="poster" src="<%= result.poster_path %>" alt="<%= result.title %> poster">
             </div>
               <p class="description"> <span class="bold">Description:</span> <%= result.overview %></p>
-              <p class="date"> <span class="bold">Release Date:</span> <%= result.release_date %></p>
+              <p class="date"> <span class="bold">Release Date:</span> <%= result.release_date %> </p>
+              
           <input type="text" name="comment" value="" placeholder="Write a comment (if you want) then click a star to rate"> 
               <div class="ratings">
                 <% for (let i = 10; i > 0; i--) { %>

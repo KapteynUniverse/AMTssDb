@@ -3,26 +3,7 @@
 
     <!-- Searchbar -->
     
-      <form action="/search" method="get" class="search-bar">
-        
-        <input
-          type="text"
-          placeholder="Search for Movie/Anime/TV Show"
-          name="search"
-        />
-        <button type="submit"><i class="fa fa-search"></i></button>
-        <nav>
-          <button class="menu" disabled>Menu</button>
-          <div class="menu-content">
-            <a  href="/" role="button">Home</a>
-            <a  href="/watchlist">Watchlist</a>
-            <a  href="/movies" role="button">Movies</a>
-            <a  href="/tv-shows" role="button">TV Shows</a>
-            <a  href="/users" role="button">Users</a>
-            <a  href="/logout" role="button">Logout</a>
-          </div>
-        </nav>
-      </form>
+    <%- include("partials/search-bar.ejs") %>
       
       <!-- Show search results -->
     

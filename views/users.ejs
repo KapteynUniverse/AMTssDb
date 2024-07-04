@@ -29,13 +29,15 @@
     
        
           <h1 class="title">SELECT AN USER TO VIEW THEIR AMTss</h1>
-          <ul>
+          <div class="grid-container-users">
             <% users.forEach(user => { %>
-              <li>
-                <a href="/<%= user.user %>"><%= user.user %></a>
-              </li>
+              <div class="user-card">
+              <a href="/<%= user.user %>" > <p class="bold"> <%= user.userName %> </p>
+                     <img class="profile-picture" src="https://cataas.com/cat?random=<%= Math.random() %>" alt="Profile Picture">  
+              </a>
+            </div>
             <% }) %>
-          </ul>
+              </div>
  
     <%-include("partials/footer.ejs") %>
   </body>

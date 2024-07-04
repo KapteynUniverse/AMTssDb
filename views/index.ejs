@@ -16,7 +16,7 @@
           <button class="menu" disabled>Menu</button>
           <div class="menu-content">
             <a  href="/">Home</a>
-            <a  href="/watchlist">Watchlist</a> <!--sayfayı orderlama getir, şu alert npm ine bak tekrar-->
+            <a  href="/watchlist">Watchlist</a> <!-- şu alert npm ine bak tekrar-->
             <a  href="/movies">Movies</a>
             <a  href="/tv-shows">TV Shows</a>
             <a  href="/users">Users</a>
@@ -64,6 +64,23 @@
       <% } else if (locals.data && locals.data.length > 0 ) { %>
         
         <h1 class="title"><%= header %></h1>
+        <form action="/order" method="post" id="orderForm">
+        <div class="radio-group">
+          <label class="radio-container"><img src="assets/icons/like.png" alt="order-by-like"/>
+              <input type="radio" name="likes">
+              <span class="checkmark"></span>
+          </label>
+          <label class="radio-container active-star"><img src="assets/icons/star.png" alt="order-by-rate"/>
+              <input type="radio" name="rating">
+              <span class="checkmark"></span>
+          </label>
+          <label class="radio-container"><img src="assets/icons/sort.png" alt="alphabetical-order"/>
+              <input type="radio" name="order">
+              <span class="checkmark"></span>
+          </label>
+      </div>
+      </form>
+        
     <div class="grid-container">
       <% data.forEach(data => { %>
         <form action="/delete" method="post" class="grid-item">
@@ -117,23 +134,31 @@
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.rating-star').forEach(star => {
-          star.addEventListener('click', (e) => {
-            const rating = e.target.getAttribute('data-rating');
-            const form = e.target.closest('form');
-            const ratingValue = form.querySelector('.rating-value');
-            ratingValue.value = parseInt(rating);
-            form.submit();
-          });
+        star.addEventListener('click', (e) => {
+        const rating = e.target.getAttribute('data-rating');
+        const form = e.target.closest('form');
+        const ratingValue = form.querySelector('.rating-value');
+        ratingValue.value = parseInt(rating);
+        form.submit();
         });
-        const commentInputs = document.querySelectorAll('input[name="comment"]');
-        commentInputs.forEach(input => {
+        });
+          const commentInputs = document.querySelectorAll('input[name="comment"]');
+          commentInputs.forEach(input => {
           const charCount = input.nextElementSibling;
           input.addEventListener('input', () => {
-            const currentLength = input.value.length;
-            charCount.textContent = `${currentLength}/255`;
-            charCount.style.color = currentLength > 0 ? 'black' : 'grey';
+          const currentLength = input.value.length;
+          charCount.textContent = `${currentLength}/255`;
+          charCount.style.color = currentLength > 0 ? 'black' : 'grey';
           });
-        });
+          });
+            const orderForm = document.getElementById('orderForm');
+            const radioButtons = orderForm.querySelectorAll('input[type="radio"]');
+            
+            radioButtons.forEach(radio => {
+            radio.addEventListener('change', () => {
+            orderForm.submit();
+            });
+            });
   });
     </script>
   </body>

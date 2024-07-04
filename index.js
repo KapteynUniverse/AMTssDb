@@ -55,7 +55,7 @@ app.get("/", async (req, res) => {
     const user_id = req.user.id;
     try {
       const database = await db.query(
-        `SELECT * FROM AMTsDb WHERE user_id = $1 AND watchlist = 'no'`,
+        `SELECT * FROM AMTsDb WHERE user_id = $1 AND watchlist = 'no' ORDER BY likes DESC`,
         [user_id]
       );
       const data = database.rows.map((obj) => ({
@@ -87,7 +87,7 @@ app.get("/movies", async (req, res) => {
     const user_id = req.user.id;
     try {
       const database = await db.query(
-        `SELECT * FROM AMTsDb WHERE user_id = $1 AND type = 'movie' AND watchlist = 'no'`,
+        `SELECT * FROM AMTsDb WHERE user_id = $1 AND type = 'movie' AND watchlist = 'no' ORDER BY likes DESC`,
         [user_id]
       );
       const data = database.rows.map((obj) => ({
@@ -119,7 +119,7 @@ app.get("/tv-shows", async (req, res) => {
     const user_id = req.user.id;
     try {
       const database = await db.query(
-        `SELECT * FROM AMTsDb WHERE user_id = $1 AND type = 'tv' AND watchlist = 'no'`,
+        `SELECT * FROM AMTsDb WHERE user_id = $1 AND type = 'tv' AND watchlist = 'no' ORDER BY likes DESC`,
         [user_id]
       );
       const data = database.rows.map((obj) => ({
@@ -144,13 +144,86 @@ app.get("/tv-shows", async (req, res) => {
   }
 });
 
+// Sort by selected action
+
+app.post("/order", async (req, res) => {
+  const user_id = req.user.id;
+  const { likes, rating, order } = req.body;
+  try {
+    if (likes === "on") {
+      const database = await db.query(
+        `SELECT * FROM AMTsDb WHERE user_id = $1 AND watchlist = 'no' ORDER BY likes DESC`,
+        [user_id]
+      );
+
+      const data = database.rows.map((obj) => ({
+        title: obj.title,
+        overview: obj.description,
+        release_date: obj.release_date.toLocaleDateString("tr-TR").slice(0, 10),
+        added_date: obj.added_date.toLocaleDateString("tr-TR").slice(0, 10),
+        poster_path: obj.url,
+        id: obj.id,
+        rate: obj.rating,
+        comment: obj.comment,
+        likes: obj.likes,
+      }));
+      res.render("index", { data: data, header: "Ordering by likes" });
+    } else if (rating === "on") {
+      const database = await db.query(
+        `SELECT * FROM AMTsDb WHERE user_id = $1 AND watchlist = 'no' ORDER BY rating DESC`,
+        [user_id]
+      );
+
+      const data = database.rows.map((obj) => ({
+        title: obj.title,
+        overview: obj.description,
+        release_date: obj.release_date.toLocaleDateString("tr-TR").slice(0, 10),
+        added_date: obj.added_date.toLocaleDateString("tr-TR").slice(0, 10),
+        poster_path: obj.url,
+        id: obj.id,
+        rate: obj.rating,
+        comment: obj.comment,
+        likes: obj.likes,
+      }));
+      res.render("index", { data: data, header: "Ordering by your ratings" });
+    } else {
+      const database = await db.query(
+        `SELECT * FROM AMTsDb WHERE user_id = $1 AND watchlist = 'no' ORDER BY title ASC`,
+        [user_id]
+      );
+      const data = database.rows.map((obj) => ({
+        title: obj.title,
+        overview: obj.description,
+        release_date: obj.release_date.toLocaleDateString("tr-TR").slice(0, 10),
+        added_date: obj.added_date.toLocaleDateString("tr-TR").slice(0, 10),
+        poster_path: obj.url,
+        id: obj.id,
+        rate: obj.rating,
+        comment: obj.comment,
+        likes: obj.likes,
+      }));
+      res.render("index", { data: data, header: "Alphabetical order" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching data");
+  }
+});
+
 // Show other user profiles
 
 app.get("/users", async (req, res) => {
+  const user_id = req.user.id;
   try {
-    const result = await db.query(`SELECT email FROM users`);
+    const result = await db.query(
+      `SELECT email FROM users WHERE id != $1 ORDER BY email ASC`,
+      [user_id]
+    );
     const users = result.rows.map((obj) => ({
       user: obj.email,
+      userName:
+        obj.email.split("@")[0].charAt(0).toUpperCase() +
+        obj.email.split("@")[0].slice(1),
     }));
 
     res.render("users", { users: users });
@@ -303,9 +376,11 @@ app.get("/search", async (req, res) => {
 
 app.get("/:email", async (req, res) => {
   const { email } = req.params;
+  const userName =
+    email.split("@")[0].charAt(0).toUpperCase() + email.split("@")[0].slice(1);
   try {
     const result = await db.query(
-      `SELECT * FROM AMTsDb WHERE user_id = (SELECT id FROM users WHERE email = $1) AND watchlist = 'no'`,
+      `SELECT * FROM AMTsDb WHERE user_id = (SELECT id FROM users WHERE email = $1) AND watchlist = 'no' ORDER BY rating DESC`,
       [email]
     );
     const data = result.rows.map((obj) => ({
@@ -319,7 +394,7 @@ app.get("/:email", async (req, res) => {
       comment: obj.comment,
       user_id: obj.user_id,
     }));
-    res.render("userAMTs", { data: data, user: email });
+    res.render("userAMTs", { data: data, user: userName });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error fetching data");

@@ -122,6 +122,28 @@ h1 {
   text-decoration: underline;
 }
 
+.likes-container {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.like-icon {
+  display: block;
+}
+
+.likes-count {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 12px;
+  cursor: default;
+}
+
 .grid-container {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -131,6 +153,7 @@ h1 {
 
 .grid-item,
 .update-flex {
+  position: relative;
   display: flex;
   flex-direction: column;
   padding: 20px;
@@ -156,6 +179,8 @@ h1 {
   border: none;
   cursor: pointer;
   padding: 0;
+  top: 10px;
+  left: 10px;
 }
 
 .invisible {

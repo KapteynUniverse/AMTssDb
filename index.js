@@ -67,9 +67,10 @@ app.get("/", async (req, res) => {
         id: obj.id,
         rate: obj.rating,
         comment: obj.comment,
+        likes: obj.likes,
       }));
 
-      res.render("index", { data: data });
+      res.render("index", { data: data, header: "AMTss" });
     } catch (err) {
       console.error(err);
       res.status(500).send("Error fetching data");
@@ -98,9 +99,10 @@ app.get("/movies", async (req, res) => {
         id: obj.id,
         rate: obj.rating,
         comment: obj.comment,
+        likes: obj.likes,
       }));
 
-      res.render("index", { data: data });
+      res.render("index", { data: data, header: "Your movies" });
     } catch (err) {
       console.error(err);
       res.status(500).send("Error fetching data");
@@ -129,9 +131,10 @@ app.get("/tv-shows", async (req, res) => {
         id: obj.id,
         rate: obj.rating,
         comment: obj.comment,
+        likes: obj.likes,
       }));
 
-      res.render("index", { data: data });
+      res.render("index", { data: data, header: "Your TV Shows" });
     } catch (err) {
       console.error(err);
       res.status(500).send("Error fetching data");
@@ -412,6 +415,8 @@ app.post("/watchlist", async (req, res) => {
     res.status(500).send("Error saving data");
   }
 });
+
+// Like any users AMTs
 
 app.post("/like", async (req, res) => {
   const item = req.body["item-id"];

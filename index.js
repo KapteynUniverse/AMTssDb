@@ -8,6 +8,7 @@ import session from "express-session"; // cookie
 import passport from "passport";
 import { Strategy } from "passport-local";
 import GoogleStrategy from "passport-google-oauth2";
+import flash from "connect-flash";
 
 const app = express();
 const port = 3000;
@@ -36,6 +37,7 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(flash());
 
 // Env
 
@@ -70,13 +72,13 @@ app.get("/", async (req, res) => {
         likes: obj.likes,
       }));
 
-      res.render("index", { data: data, header: "AMTss" });
+      res.render("index", { data: data, header: "AMTss", err: null });
     } catch (err) {
       console.error(err);
       res.status(500).send("Error fetching data");
     }
   } else {
-    res.render("login-register");
+    res.render("login-register", { err: null });
   }
 });
 
@@ -102,13 +104,13 @@ app.get("/movies", async (req, res) => {
         likes: obj.likes,
       }));
 
-      res.render("index", { data: data, header: "Your movies" });
+      res.render("index", { data: data, header: "Your movies", err: null });
     } catch (err) {
       console.error(err);
       res.status(500).send("Error fetching data");
     }
   } else {
-    res.render("login-register");
+    res.render("login-register", { err: null });
   }
 });
 
@@ -134,13 +136,13 @@ app.get("/tv-shows", async (req, res) => {
         likes: obj.likes,
       }));
 
-      res.render("index", { data: data, header: "Your TV Shows" });
+      res.render("index", { data: data, header: "Your TV Shows", err: null });
     } catch (err) {
       console.error(err);
       res.status(500).send("Error fetching data");
     }
   } else {
-    res.render("login-register");
+    res.render("login-register", { err: null });
   }
 });
 
@@ -167,7 +169,11 @@ app.post("/order", async (req, res) => {
         comment: obj.comment,
         likes: obj.likes,
       }));
-      res.render("index", { data: data, header: "Ordering by likes" });
+      res.render("index", {
+        data: data,
+        header: "Ordering by likes",
+        err: null,
+      });
     } else if (rating === "on") {
       const database = await db.query(
         `SELECT * FROM AMTsDb WHERE user_id = $1 AND watchlist = 'no' ORDER BY rating DESC`,
@@ -185,7 +191,11 @@ app.post("/order", async (req, res) => {
         comment: obj.comment,
         likes: obj.likes,
       }));
-      res.render("index", { data: data, header: "Ordering by your ratings" });
+      res.render("index", {
+        data: data,
+        header: "Ordering by your ratings",
+        err: null,
+      });
     } else {
       const database = await db.query(
         `SELECT * FROM AMTsDb WHERE user_id = $1 AND watchlist = 'no' ORDER BY title ASC`,
@@ -202,7 +212,11 @@ app.post("/order", async (req, res) => {
         comment: obj.comment,
         likes: obj.likes,
       }));
-      res.render("index", { data: data, header: "Alphabetical order" });
+      res.render("index", {
+        data: data,
+        header: "Alphabetical order",
+        err: null,
+      });
     }
   } catch (err) {
     console.error(err);
@@ -255,7 +269,7 @@ app.get("/watchlist", async (req, res) => {
 });
 
 app.get("/login-register", (req, res) => {
-  res.render("login-register");
+  res.render("login-register", { err: req.flash("error")[0] });
 });
 
 // Login via Google
@@ -272,6 +286,7 @@ app.get(
   passport.authenticate("google", {
     successRedirect: "/",
     failureRedirect: "login-register",
+    failureFlash: true,
   })
 );
 
@@ -286,7 +301,7 @@ app.get("/logout", (req, res) => {
     if (err) {
       return next(err);
     }
-    res.redirect("/");
+    res.redirect("/login-register");
   });
 });
 
@@ -297,6 +312,7 @@ app.post(
   passport.authenticate("local", {
     successRedirect: "/",
     failureRedirect: "login-register",
+    failureFlash: true,
   })
 );
 
@@ -310,7 +326,9 @@ app.post("/register", async (req, res) => {
       email,
     ]);
     if (checkResult.rows.length > 0) {
-      res.send("Email already exists. Try logging in.");
+      res.render("login-register", {
+        err: "Email already exists. Try logging in.",
+      });
     } else {
       bcrypt.hash(password, saltRounds, async (err, hash) => {
         if (err) {
@@ -366,6 +384,7 @@ app.get("/search", async (req, res) => {
 
     res.render("index", {
       results: results,
+      err: null,
     });
   } catch (err) {
     res.status(500).send(err.message);
@@ -415,7 +434,9 @@ app.post("/add", async (req, res) => {
     res.redirect("/");
   } catch (err) {
     console.error(err);
-    res.status(500).send("Error saving data");
+    res.render("index", {
+      err: "This AMTSs already exist",
+    });
   }
 });
 
@@ -487,7 +508,9 @@ app.post("/watchlist", async (req, res) => {
     res.redirect("/watchlist");
   } catch (err) {
     console.error(err);
-    res.status(500).send("Error saving data");
+    res.render("index", {
+      err: "This AMTSs already exist",
+    });
   }
 });
 
@@ -528,7 +551,9 @@ passport.use(
               if (valid) {
                 return cb(null, user);
               } else {
-                return cb(null, false);
+                return cb(null, false, {
+                  message: "Incorrect password.",
+                });
               }
             }
           });

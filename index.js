@@ -509,7 +509,7 @@ app.post("/watchlist", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.render("index", {
-      err: "This AMTSs already exist",
+      err: "You have already added this AMTs to watchlist.",
     });
   }
 });
@@ -517,18 +517,30 @@ app.post("/watchlist", async (req, res) => {
 // Like any users AMTs
 
 app.post("/like", async (req, res) => {
-  const item = req.body["item-id"];
-  const user = req.body["user-id"];
+  const itemId = req.body["item-id"];
+  const likerUserId = req.user.id;
 
   try {
+    const checkLiked = await db.query(
+      `SELECT id FROM user_likes WHERE liker_id = $1 AND item_id = $2`,
+      [likerUserId, itemId]
+    );
+    if (checkLiked.rows.length > 0) {
+      return res.status(400).render("index", {
+        err: "You have already liked this AMTs.",
+      });
+    }
+    await db.query(`UPDATE AMTsDb SET likes = likes + 1 WHERE id = $1`, [
+      itemId,
+    ]);
     await db.query(
-      `UPDATE AMTsDb SET likes = likes + 1 WHERE id = $1 AND user_id = $2`,
-      [item, user]
+      `INSERT INTO user_likes (liker_id, item_id) VALUES ($1, $2)`,
+      [likerUserId, itemId]
     );
     res.redirect("back");
   } catch (err) {
     console.error(err);
-    res.status(500).send("Error fetching data");
+    res.status(500).send("Error processing like operation");
   }
 });
 

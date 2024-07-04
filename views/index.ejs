@@ -16,7 +16,7 @@
           <button class="menu" disabled>Menu</button>
           <div class="menu-content">
             <a  href="/">Home</a>
-            <a  href="/watchlist">Watchlist</a> <!--sayfa ayarla, isim ekleyebilsinler, usersda mail yerine isim gözüksün add kısmına add to watchlist koy watchlistekini de izledim deyince ayrı bir sayfada comment rate açılsın-->
+            <a  href="/watchlist">Watchlist</a> <!-- Başkalarının profiline girince like yapılabilsin, sayfayı orderlama getir, şu alert npm ine bak tekrar-->
             <a  href="/movies">Movies</a>
             <a  href="/tv-shows">TV Shows</a>
             <a  href="/users">Users</a>
@@ -41,7 +41,8 @@
               <p class="description"> <span class="bold">Description:</span> <%= result.overview %></p>
               <p class="date"> <span class="bold">Release Date:</span> <%= result.release_date %> </p>
               
-          <input type="text" name="comment" value="" placeholder="Write a comment (if you want) then click a star to rate"> 
+          <input type="text" name="comment" value="" placeholder="Write a comment (if you want) then click a star to rate" maxlength="255" > 
+          <div class="char-count">0/255</div>
               <div class="ratings">
                 <% for (let i = 10; i > 0; i--) { %>
                 <span class="rating-star" data-rating="<%= i %>">★</span>
@@ -120,7 +121,16 @@
             form.submit();
           });
         });
-      });
+        const commentInputs = document.querySelectorAll('input[name="comment"]');
+        commentInputs.forEach(input => {
+          const charCount = input.nextElementSibling;
+          input.addEventListener('input', () => {
+            const currentLength = input.value.length;
+            charCount.textContent = `${currentLength}/255`;
+            charCount.style.color = currentLength > 0 ? 'black' : 'grey';
+          });
+        });
+  });
     </script>
   </body>
 </html>

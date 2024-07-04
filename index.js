@@ -302,7 +302,7 @@ app.get("/:email", async (req, res) => {
   const { email } = req.params;
   try {
     const result = await db.query(
-      `SELECT * FROM AMTsDb WHERE user_id = (SELECT id FROM users WHERE email = $1 AND watchlist = 'no')`,
+      `SELECT * FROM AMTsDb WHERE user_id = (SELECT id FROM users WHERE email = $1) AND watchlist = 'no'`,
       [email]
     );
     const data = result.rows.map((obj) => ({
@@ -314,6 +314,7 @@ app.get("/:email", async (req, res) => {
       id: obj.id,
       rate: obj.rating,
       comment: obj.comment,
+      user_id: obj.user_id,
     }));
     res.render("userAMTs", { data: data, user: email });
   } catch (err) {
@@ -409,6 +410,22 @@ app.post("/watchlist", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send("Error saving data");
+  }
+});
+
+app.post("/like", async (req, res) => {
+  const item = req.body["item-id"];
+  const user = req.body["user-id"];
+
+  try {
+    await db.query(
+      `UPDATE AMTsDb SET likes = likes + 1 WHERE id = $1 AND user_id = $2`,
+      [item, user]
+    );
+    res.redirect("back");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching data");
   }
 });
 

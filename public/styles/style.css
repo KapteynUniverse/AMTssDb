@@ -142,7 +142,15 @@ h1 {
   min-width: 450px;
 }
 
-.watchlist-btn {
+.char-count {
+  font-size: 16px;
+  color: grey;
+  text-align: right;
+  margin-top: 5px;
+}
+
+.watchlist-btn,
+.like-btn {
   position: absolute;
   background: none;
   border: none;
@@ -165,7 +173,8 @@ h1 {
   transition: opacity 0.3s;
 }
 
-.watchlist-btn:hover {
+.watchlist-btn:hover,
+.like-btn:hover {
   background: none;
 }
 

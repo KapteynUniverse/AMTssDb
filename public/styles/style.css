@@ -1,3 +1,9 @@
+:root {
+  --menu-background-color: #4285f4;
+  --menu-background-hover-color: #357ae8;
+  --menu-text-color: white;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -27,7 +33,7 @@ body {
 
 .menu {
   padding: 10px;
-  background-color: #4285f4;
+  background-color: var(--menu-background-color);
   color: white;
   text-align: center;
   border: none;
@@ -45,7 +51,7 @@ nav {
 .menu-content {
   display: none;
   position: absolute;
-  background-color: #4285f4;
+  background-color: var(--menu-background-color);
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
 }
@@ -58,7 +64,7 @@ nav {
 }
 
 .menu-content a:hover {
-  background-color: #357ae8;
+  background-color: var(--menu-background-hover-color);
   border-radius: 5px;
 }
 
@@ -73,7 +79,7 @@ nav:hover .menu-content {
 }
 
 nav:hover .menu {
-  background-color: #357ae8;
+  background-color: var(--menu-background-hover-color);
 }
 
 .search-bar {
@@ -105,7 +111,7 @@ button:hover {
 
 .logout {
   padding: 10px;
-  background-color: #4285f4;
+  background-color: var(--menu-background-color);
   color: white;
   text-align: center;
   border: none;
@@ -115,7 +121,7 @@ button:hover {
 }
 
 .logout:hover {
-  background-color: #357ae8;
+  background-color: var(--menu-background-hover-color);
 }
 
 h1 {
@@ -260,12 +266,17 @@ h2 {
   transition: opacity 0.3s;
 }
 
+.like-btn > .invisible {
+  width: 90px;
+}
+
 .watchlist-btn:hover,
 .like-btn:hover {
   background: none;
 }
 
-.watchlist-btn:hover .invisible {
+.watchlist-btn:hover .invisible,
+.like-btn:hover .invisible {
   opacity: 1;
 }
 
@@ -387,7 +398,7 @@ h2 {
   display: block;
   width: 50%;
   padding: 10px;
-  background-color: #4285f4;
+  background-color: var(--menu-background-color);
   color: white;
   text-align: center;
   border: none;
@@ -397,7 +408,7 @@ h2 {
 }
 
 .login:hover {
-  background-color: #357ae8;
+  background-color: var(--menu-background-hover-color);
 }
 
 .google-container {
@@ -409,14 +420,14 @@ h2 {
   display: inline-block;
   width: 100%;
   padding: 10px;
-  background-color: #4285f4;
+  background-color: var(--menu-background-color);
   color: white;
   text-decoration: none;
   border-radius: 5px;
 }
 
 .btn-block:hover {
-  background-color: #357ae8;
+  background-color: var(--menu-background-hover-color);
 }
 
 .update-flex {

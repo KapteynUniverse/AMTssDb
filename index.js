@@ -412,6 +412,7 @@ app.get("/:email", async (req, res) => {
       rate: obj.rating,
       comment: obj.comment,
       user_id: obj.user_id,
+      likes: obj.likes,
     }));
     res.render("userAMTs", { data: data, user: userName });
   } catch (err) {
@@ -433,10 +434,41 @@ app.post("/add", async (req, res) => {
     );
     res.redirect("/");
   } catch (err) {
-    console.error(err);
-    res.render("index", {
-      err: "This AMTSs already exist",
-    });
+    const database = await db.query(
+      `SELECT * FROM AMTsDb WHERE user_id = $1 AND description =$2`,
+      [user_id, description]
+    );
+    const inWatchlist = database.rows[0].watchlist;
+    const id = database.rows[0].id;
+    if (inWatchlist === "yes") {
+      await db.query(
+        `UPDATE AMTsDb SET rating = $1, comment = $2, watchlist = 'no' WHERE user_id = $3 AND id = $4`,
+        [rate, comment, user_id, id]
+      );
+      res.redirect("/");
+    } else {
+      const database = await db.query(
+        `SELECT * FROM AMTsDb WHERE user_id = $1 AND watchlist = 'no' ORDER BY likes DESC`,
+        [user_id]
+      );
+      const data = database.rows.map((obj) => ({
+        title: obj.title,
+        overview: obj.description,
+        release_date: obj.release_date.toLocaleDateString("tr-TR").slice(0, 10),
+        added_date: obj.added_date.toLocaleDateString("tr-TR").slice(0, 10),
+        poster_path: obj.url,
+        id: obj.id,
+        rate: obj.rating,
+        comment: obj.comment,
+        likes: obj.likes,
+      }));
+      res.render("index", {
+        data: data,
+        header: "AMTss",
+        err: "You have added this AMTs before.",
+      });
+      console.error(err);
+    }
   }
 });
 
@@ -445,7 +477,10 @@ app.post("/add", async (req, res) => {
 app.post("/delete", async (req, res) => {
   const id = req.body.del;
   try {
+    await db.query("BEGIN");
+    await db.query(`DELETE FROM user_likes WHERE item_id = $1`, [id]);
     await db.query(`DELETE FROM AMTsDb WHERE id = $1`, [id]);
+    await db.query("COMMIT");
     res.redirect("/");
   } catch (err) {
     console.log(err);
@@ -465,13 +500,11 @@ app.post("/to-update", async (req, res) => {
     res.render("update", {
       title: data.title,
       overview: data.description,
-      release_date: data.release_date,
-      added_date: data.added_date,
+      release_date: data.release_date.toLocaleDateString("tr-TR").slice(0, 10),
       poster_path: data.url,
       id: data.id,
-      rate: data.rating,
       comment: data.comment,
-      type: data.type,
+      err: null,
     });
   } catch (err) {
     console.error(err);
@@ -507,10 +540,22 @@ app.post("/watchlist", async (req, res) => {
     );
     res.redirect("/watchlist");
   } catch (err) {
-    console.error(err);
-    res.render("index", {
-      err: "You have already added this AMTs to watchlist.",
+    const database = await db.query(
+      `SELECT * FROM AMTsDb WHERE user_id = $1 AND watchlist = 'yes'`,
+      [user_id]
+    );
+    const data = database.rows.map((obj) => ({
+      title: obj.title,
+      overview: obj.description,
+      release_date: obj.release_date.toLocaleDateString("tr-TR").slice(0, 10),
+      poster_path: obj.url,
+      id: obj.id,
+    }));
+    res.render("watchlist", {
+      data: data,
+      err: "You have already added this AMTs to your watchlist.",
     });
+    console.error(err);
   }
 });
 
@@ -620,6 +665,4 @@ app.listen(port, () => {
   console.log(`API is running at http://localhost:${port}`);
 });
 
-// Puştlar bizim logomuzu koyacaksın uygulamana diyor
-
-// https://www.themoviedb.org/about/logos-attribution
+// Like atınca success alerti, bazı yerlerdeki h1 elementlerini server tarafından değiştirme olabilir

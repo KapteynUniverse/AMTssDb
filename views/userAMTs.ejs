@@ -2,7 +2,7 @@
   <body>
 
     <%- include("partials/search-bar.ejs") %>
-    
+    <% if (locals.data.length > 0) { %>
     <h1 class="title">AMTss of <%= user %></h1>
     
     <div class="grid-container">
@@ -38,8 +38,8 @@
             <% } else {%>
               <p class="comment"><span class="bold"><%= user %> did not give a comment for this A/M/Ts</span></p>
               <% } %>
-              <button class="like-btn" type="submit"><img src="assets/icons/like.png" alt="like-button"
-                /></button>
+                  <button class="like-btn" type="submit"><img src="assets/icons/like.png" alt="like-button"
+                    /><span class="invisible">Click to like</span></button>
                 <input type="hidden" name="item-id" value="<%= item.id %>">
                 <input type="hidden" name="user-id" value="<%= item.user_id %>">
       </form>
@@ -48,6 +48,9 @@
     <a href="#" class="up-arrow"
       ><img src="assets/icons/up.png" alt="up-arrow"
     /></a>
+    <% } else { %>
+      <h1 class="title">This person hasn't added anything yet</h1>
+      <% } %>
     <%-include("partials/footer.ejs") %>
   </body>
 </html>

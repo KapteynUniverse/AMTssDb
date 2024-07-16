@@ -64,8 +64,12 @@
       <% data.forEach(data => { %>
         <form action="/delete" method="post" class="grid-item">
           <div class="likes-container">
+            <% if (data.likes === 0) { %>
+              <img class="like-icon" src="assets/icons/like.png" alt="like-button"/>
+            <% } else { %>
             <span class="likes-count"><%= data.likes %></span>
             <img class="like-icon" src="assets/icons/like.png" alt="like-button"/>
+            <% } %>
         </div>
           <h2 class="title"><%= data.title %></h2>
           <div class="poster-card" >

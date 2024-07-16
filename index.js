@@ -261,7 +261,7 @@ app.get("/watchlist", async (req, res) => {
       poster_path: obj.url,
       id: obj.id,
     }));
-    res.render("watchlist", { data: data });
+    res.render("watchlist", { data: data,  err: null });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error fetching data");

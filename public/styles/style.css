@@ -202,7 +202,8 @@ h2 {
   display: block;
 }
 
-.likes-count {
+.likes-count,
+.likes-count2 {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -210,6 +211,11 @@ h2 {
   color: white;
   font-size: 12px;
   cursor: default;
+}
+
+.likes-count2 {
+  top: 45%;
+  cursor: pointer;
 }
 
 .grid-container {

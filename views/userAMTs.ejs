@@ -38,7 +38,7 @@
             <% } else {%>
               <p class="comment"><span class="bold"><%= user %> did not give a comment for this A/M/Ts</span></p>
               <% } %>
-                  <button class="like-btn" type="submit"><span class="likes-count2"><%= item.likes %><img src="assets/icons/like.png" alt="like-button"
+                  <button class="like-btn" type="submit"><span class="likes-count2"><%= item.likes %></span><img src="assets/icons/like.png" alt="like-button"
                     /><span class="invisible">Click to like</span></button>
                 <input type="hidden" name="item-id" value="<%= item.id %>">
                 <input type="hidden" name="user-id" value="<%= item.user_id %>">

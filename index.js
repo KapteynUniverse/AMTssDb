@@ -9,6 +9,7 @@ import passport from "passport";
 import { Strategy } from "passport-local";
 import GoogleStrategy from "passport-google-oauth2";
 import flash from "connect-flash";
+import path from "path";
 
 const app = express();
 const port = 3000;
@@ -20,7 +21,6 @@ env.config();
 // Middleware
 
 app.set("view engine", "ejs");
-app.set('views', path.join(__dirname, 'views'));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));

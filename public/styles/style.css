@@ -539,3 +539,19 @@ body::-webkit-scrollbar-thumb {
     text-align: center;
   }
 }
+@media screen and (max-width: 480px) {
+  .form-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .google-container {
+    width: 300px;
+    text-align: center;
+  }
+  .grid-container {
+    grid-template-columns: 1fr;
+  }
+  .grid-item {
+    min-width: 300px;
+  }
+}

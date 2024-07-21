@@ -666,4 +666,4 @@ app.listen(port, () => {
   console.log(`API is running at http://localhost:${port}`);
 });
 
-// Like atınca success alerti, bazı yerlerdeki h1 elementlerini server tarafından değiştirme olabilir
+export default app;

@@ -9,24 +9,21 @@ import passport from "passport";
 import { Strategy } from "passport-local";
 import GoogleStrategy from "passport-google-oauth2";
 import flash from "connect-flash";
-import path from "path"; // delete if not work
-import { fileURLToPath } from 'url'; // delete if not work
 
 const app = express();
 const port = 3000;
 const saltRounds = 10; //hashing
 const API_URL = "https://api.themoviedb.org/3"; // API for AMTsDB
 const IMG_URL = "https://image.tmdb.org/t/p/original"; // Poster URL
-const __filename = fileURLToPath(import.meta.url); // delete if not work
-const __dirname = path.dirname(__filename); // delete if not work
+
 env.config();
 
 // Middleware
-app.set('views', path.join(__dirname, 'views')); // delete if not work
+
 app.set("view engine", "ejs");
 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public'))); // change
+app.use(express.static("public"));
 
 app.use(
   session({
@@ -668,5 +665,3 @@ passport.deserializeUser((user, cb) => {
 app.listen(port, () => {
   console.log(`API is running at http://localhost:${port}`);
 });
-
-export default app;  // delete if not work

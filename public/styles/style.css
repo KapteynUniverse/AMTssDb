@@ -556,6 +556,6 @@ body::-webkit-scrollbar-thumb {
     min-width: 300px;
   }
   .ratings span {
-  font-size: 24px;
+  font-size: 32px;
 }
 }

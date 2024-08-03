@@ -555,4 +555,7 @@ body::-webkit-scrollbar-thumb {
   .grid-item {
     min-width: 300px;
   }
+  .ratings span {
+  font-size: 24px;
+}
 }

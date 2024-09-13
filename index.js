@@ -58,7 +58,7 @@ app.get("/", async (req, res) => {
     const user_id = req.user.id;
     try {
       const database = await db.query(
-        `SELECT * FROM AMTsDb WHERE user_id = $1 AND watchlist = 'no' ORDER BY likes DESC`,
+        `SELECT * FROM AMTsDb WHERE user_id = $1 AND watchlist = 'no' ORDER BY added_date ASC`,
         [user_id]
       );
       const data = database.rows.map((obj) => ({

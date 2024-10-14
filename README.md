@@ -12,10 +12,12 @@ You can search a movie or tv show, add them to your list or watchlist, rate them
 ![Search](./public/assets/search.png)
 ### List
 ![List](./public/assets/list.png)
-### Watclist
+### Watchlist
 ![List](./public/assets/watchlist.png)
 ### Update
 ![Update](./public/assets/update.png)
 ### Other users
 ![Update](./public/assets/users.png)
 ![Update](./public/assets/anotherUserList.png)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
